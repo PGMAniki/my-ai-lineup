@@ -44,8 +44,8 @@ onBeforeUnmount(() => {
         </div>
         <button ref="closeButton" type="button" aria-label="关闭分享图" @click="$emit('close')">×</button>
       </header>
-      <img :src="imageUrl" alt="我的AI阵容分享图预览" />
-      <p>{{ isWeChat ? '长按图片保存或发送给朋友。' : '点击下方按钮保存图片。' }}</p>
+      <img :src="imageUrl" alt="我的AI阵容分享图预览" draggable="false" />
+      <p>{{ isWeChat ? '请长按上方图片，选择“保存到手机”或发送给朋友。' : '点击下方按钮保存图片。' }}</p>
       <a v-if="!isWeChat" :href="imageUrl" download="我的AI阵容.png">保存图片</a>
       <section class="share-modal__copy" aria-labelledby="share-copy-title">
         <strong id="share-copy-title">推荐分享文案</strong>
@@ -108,6 +108,8 @@ onBeforeUnmount(() => {
   margin: 0 auto;
   border: 1px solid var(--color-border);
   border-radius: 10px;
+  -webkit-touch-callout: default;
+  user-select: auto;
 }
 
 @media (max-width: 480px) {
