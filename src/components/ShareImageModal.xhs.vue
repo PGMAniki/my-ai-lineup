@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
+import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 
-defineProps<{
+const props = defineProps<{
   imageUrl: string
+  canvas?: HTMLCanvasElement
   isWeChat: boolean
   shareText: string
 }>()
@@ -12,7 +13,19 @@ defineEmits<{
 }>()
 
 const closeButton = ref<HTMLButtonElement>()
+const displayCanvas = ref<HTMLCanvasElement>()
 const screenshotMode = ref(false)
+
+const paintCanvas = async (): Promise<void> => {
+  await nextTick()
+  const target = displayCanvas.value
+  const source = props.canvas
+  if (!target || !source) return
+  const context = target.getContext('2d')
+  if (!context) return
+  context.clearRect(0, 0, target.width, target.height)
+  context.drawImage(source, 0, 0)
+}
 
 const enterScreenshotMode = (): void => {
   screenshotMode.value = true
@@ -26,7 +39,10 @@ onMounted(async () => {
   document.body.style.overflow = 'hidden'
   await nextTick()
   closeButton.value?.focus()
+  await paintCanvas()
 })
+
+watch([() => props.canvas, screenshotMode], paintCanvas)
 
 onBeforeUnmount(() => {
   document.body.style.overflow = ''
@@ -43,7 +59,12 @@ onBeforeUnmount(() => {
     @click="leaveScreenshotMode"
     @keydown.enter="leaveScreenshotMode"
   >
-    <img :src="imageUrl" alt="我的AI阵容分享图，点击退出截图模式" />
+    <canvas
+      ref="displayCanvas"
+      :width="canvas?.width ?? 1080"
+      :height="canvas?.height ?? 1440"
+      aria-label="我的AI阵容分享图，点击退出截图模式"
+    ></canvas>
   </div>
 
   <div v-else class="share-modal" @click.self="$emit('close')">
@@ -63,7 +84,13 @@ onBeforeUnmount(() => {
           ×
         </button>
       </header>
-      <img class="share-modal__preview" :src="imageUrl" alt="我的AI阵容分享图预览" />
+      <canvas
+        ref="displayCanvas"
+        class="share-modal__preview"
+        :width="canvas?.width ?? 1080"
+        :height="canvas?.height ?? 1440"
+        aria-label="我的AI阵容分享图预览"
+      ></canvas>
       <p>进入截图模式后不会显示按钮，使用系统截图即可保存。</p>
       <button class="share-modal__screenshot" type="button" @click="enterScreenshotMode">
         进入截图模式
@@ -159,7 +186,7 @@ onBeforeUnmount(() => {
   background: #0b0d12;
 }
 
-.screenshot-view img {
+.screenshot-view canvas {
   display: block;
   width: 100%;
   max-width: 100%;

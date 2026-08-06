@@ -3,6 +3,7 @@ import { nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 
 const props = defineProps<{
   imageUrl: string
+  canvas?: HTMLCanvasElement
   isWeChat: boolean
   shareText: string
 }>()

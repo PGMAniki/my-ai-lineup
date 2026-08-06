@@ -143,12 +143,12 @@ const canvasToBlob = (canvas: HTMLCanvasElement): Promise<Blob> =>
     }, 'image/png')
   })
 
-export const renderShareImage = async (
+export const renderShareCanvas = async (
   profile: GeneratedProfile,
   homeUrl: string,
   displayHost: string,
   isXiaohongshu = false,
-): Promise<Blob> => {
+): Promise<HTMLCanvasElement> => {
   const canvas = document.createElement('canvas')
   canvas.width = WIDTH
   canvas.height = HEIGHT
@@ -306,5 +306,11 @@ export const renderShareImage = async (
     context.textAlign = 'left'
   }
 
-  return canvasToBlob(canvas)
+  return canvas
 }
+
+export const renderShareImage = async (
+  profile: GeneratedProfile,
+  homeUrl: string,
+  displayHost: string,
+): Promise<Blob> => canvasToBlob(await renderShareCanvas(profile, homeUrl, displayHost))

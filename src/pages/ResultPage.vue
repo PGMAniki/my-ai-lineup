@@ -15,7 +15,15 @@ const router = useRouter()
 const copyStatus = ref('')
 const showH5ShareActions = !IS_XIAOHONGSHU
 const { clearSelection } = useSelection()
-const { isGenerating, error: shareError, previewUrl, isWeChat, generate, closePreview } = useShareImage()
+const {
+  isGenerating,
+  error: shareError,
+  previewUrl,
+  previewCanvas,
+  isWeChat,
+  generate,
+  closePreview,
+} = useShareImage()
 
 const resultState = computed(() => {
   try {
@@ -151,8 +159,9 @@ const restart = async (): Promise<void> => {
       </p>
 
       <ShareImageModal
-        v-if="previewUrl"
+        v-if="previewUrl || previewCanvas"
         :image-url="previewUrl"
+        :canvas="previewCanvas"
         :is-we-chat="isWeChat"
         :share-text="recommendedShareText"
         @close="closePreview"
