@@ -37,6 +37,25 @@ const drawWrappedText = (
   return y + lines.length * lineHeight
 }
 
+const drawFittedText = (
+  context: CanvasRenderingContext2D,
+  text: string,
+  x: number,
+  y: number,
+  maxWidth: number,
+  initialSize: number,
+  minimumSize: number,
+  weight = 800,
+): void => {
+  let fontSize = initialSize
+  context.font = `${weight} ${fontSize}px system-ui, sans-serif`
+  while (fontSize > minimumSize && context.measureText(text).width > maxWidth) {
+    fontSize -= 1
+    context.font = `${weight} ${fontSize}px system-ui, sans-serif`
+  }
+  context.fillText(text, x, y)
+}
+
 const drawRadar = (
   context: CanvasRenderingContext2D,
   profile: GeneratedProfile,
@@ -154,7 +173,7 @@ export const renderShareImage = async (
   }
 
   context.fillStyle = ACCENT
-  context.font = '800 27px system-ui, sans-serif'
+  context.font = '800 30px system-ui, sans-serif'
   context.letterSpacing = '5px'
   context.fillText('我的AI身份', 72, 68)
   context.letterSpacing = '0px'
@@ -172,16 +191,16 @@ export const renderShareImage = async (
   roundedRect(context, 72, captainTop, 936, 82, 22)
   context.fillStyle = SURFACE
   context.fill()
+  roundedRect(context, 72, captainTop, 8, 82, 4)
+  context.fillStyle = ACCENT
+  context.fill()
   context.fillStyle = MUTED
   context.font = '700 19px system-ui, sans-serif'
-  context.fillText('本命 AI', 96, captainTop + 32)
+  context.fillText('本命 AI', 104, captainTop + 50)
   context.fillStyle = ACCENT
-  context.font = '800 32px system-ui, sans-serif'
-  context.textAlign = 'right'
-  context.fillText(profile.captain.name, 984, captainTop + 52)
-  context.textAlign = 'left'
+  drawFittedText(context, profile.captain.name, 230, captainTop + 54, 738, 38, 27)
 
-  const radarCenterY = Math.max(650, captainBottom + 228)
+  const radarCenterY = Math.max(615, captainBottom + 210)
   drawRadar(context, profile, 540, radarCenterY, 170)
 
   const tagsTitleY = radarCenterY + 250
@@ -203,41 +222,57 @@ export const renderShareImage = async (
   })
   context.textAlign = 'left'
 
-  context.fillStyle = MUTED
-  context.font = '700 18px system-ui, sans-serif'
+  context.fillStyle = TEXT
+  context.font = '800 27px system-ui, sans-serif'
   const rosterTitleY = tagsTitleY + 110
-  context.fillText(`我的AI阵容 · ${profile.selectedTools.length}款工具`, 72, rosterTitleY)
+  context.fillText('我的常用AI', 72, rosterTitleY)
+  const rosterHeadingWidth = context.measureText('我的常用AI').width
+  context.fillStyle = MUTED
+  context.font = '600 17px system-ui, sans-serif'
+  context.fillText(`${profile.selectedTools.length}款`, 72 + rosterHeadingWidth + 18, rosterTitleY)
+  if (isXiaohongshu) {
+    context.textAlign = 'right'
+    context.fillStyle = MUTED
+    context.font = '600 17px system-ui, sans-serif'
+    context.fillText('小红书搜索「刘道理」', 1008, rosterTitleY)
+    context.textAlign = 'left'
+  }
   profile.selectedTools.forEach((tool, index) => {
-    const column = index % 4
-    const row = Math.floor(index / 4)
-    const x = 72 + column * 235
-    const y = rosterTitleY + 24 + row * 64
-    context.strokeStyle = 'rgba(255,255,255,0.12)'
+    const column = index % 2
+    const row = Math.floor(index / 2)
+    const x = 72 + column * 480
+    const xhsCardSize =
+      profile.selectedTools.length <= 4
+        ? { height: 128, step: 138, font: 45, baseline: 82 }
+        : profile.selectedTools.length <= 6
+          ? { height: 82, step: 90, font: 38, baseline: 55 }
+          : { height: 68, step: 76, font: 34, baseline: 46 }
+    const cardHeight = isXiaohongshu ? xhsCardSize.height : 54
+    const rowStep = isXiaohongshu ? xhsCardSize.step : 61
+    const y = rosterTitleY + 24 + row * rowStep
+    roundedRect(context, x, y, 456, cardHeight, 14)
+    context.fillStyle = tool.id === profile.captain.id ? 'rgba(132,255,106,0.10)' : SURFACE
+    context.fill()
+    context.strokeStyle = tool.id === profile.captain.id ? 'rgba(132,255,106,0.48)' : 'rgba(255,255,255,0.10)'
     context.lineWidth = 2
-    context.beginPath()
-    context.moveTo(x, y)
-    context.lineTo(x + 200, y)
     context.stroke()
     context.fillStyle = tool.id === profile.captain.id ? ACCENT : TEXT
-    context.font = '800 27px system-ui, sans-serif'
-    const name = tool.shortName.length > 11 ? `${tool.shortName.slice(0, 10)}…` : tool.shortName
-    context.fillText(name, x, y + 41)
+    drawFittedText(
+      context,
+      tool.shortName,
+      x + 22,
+      y + (isXiaohongshu ? xhsCardSize.baseline : 37),
+      412,
+      isXiaohongshu ? xhsCardSize.font : 30,
+      22,
+    )
   })
 
-  roundedRect(context, 72, 1242, 936, 128, 24)
-  context.fillStyle = SURFACE
-  context.fill()
+  if (!isXiaohongshu) {
+    roundedRect(context, 72, 1242, 936, 128, 24)
+    context.fillStyle = SURFACE
+    context.fill()
 
-  if (isXiaohongshu) {
-    context.fillStyle = ACCENT
-    context.font = '900 34px system-ui, sans-serif'
-    context.textAlign = 'center'
-    context.fillText('小红书搜索 刘道理', 540, 1294)
-    context.fillStyle = MUTED
-    context.font = '600 21px system-ui, sans-serif'
-    context.fillText('截图保存 · 分享你的AI身份', 540, 1335)
-    context.textAlign = 'left'
-  } else {
     const qrDataUrl = await QRCode.toDataURL(homeUrl, {
       width: 180,
       margin: 1,
