@@ -1,3 +1,10 @@
 /// <reference types="vite/client" />
 
+declare module '@author-entry' {
+  import type { DefineComponent } from 'vue'
+
+  const component: DefineComponent
+  export default component
+}
+
 declare const __APP_TARGET__: 'h5' | 'xiaohongshu'

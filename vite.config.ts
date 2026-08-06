@@ -14,6 +14,14 @@ export default defineConfig(({ mode }) => {
     },
     resolve: {
       alias: {
+        '@author-entry': fileURLToPath(
+          new URL(
+            isXiaohongshu
+              ? './src/components/AuthorEntry.xhs.vue'
+              : './src/components/AuthorEntry.vue',
+            import.meta.url,
+          ),
+        ),
         '@share-image-modal': fileURLToPath(
           new URL(
             isXiaohongshu

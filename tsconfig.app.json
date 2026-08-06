@@ -5,6 +5,7 @@
     "types": ["vite/client"],
     "allowArbitraryExtensions": true,
     "paths": {
+      "@author-entry": ["./src/components/AuthorEntry.vue"],
       "@share-image-modal": ["./src/components/ShareImageModal.vue"],
       "@platform-actions": ["./src/platform/actions.h5.ts"]
     },

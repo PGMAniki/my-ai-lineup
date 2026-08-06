@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import AuthorEntry from '@author-entry'
 import { TOOL_BY_ID } from '../config/tools'
 
 const sampleTools = ['chatgpt', 'perplexity', 'codex', 'midjourney', 'seedance'].flatMap((id) => {
@@ -62,6 +63,7 @@ const sampleTools = ['chatgpt', 'perplexity', 'codex', 'midjourney', 'seedance']
     <footer class="home-page__footer">
       <p>无需登录，不收集个人信息，结果仅供娱乐。</p>
       <p>你的选择和结果默认只保存在当前浏览器中，不会上传到服务器。</p>
+      <AuthorEntry />
     </footer>
   </main>
 </template>
@@ -270,4 +272,5 @@ const sampleTools = ['chatgpt', 'perplexity', 'codex', 'midjourney', 'seedance']
   font-size: 10px;
   line-height: 1.55;
 }
+
 </style>
