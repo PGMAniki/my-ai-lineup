@@ -1,0 +1,31 @@
+{
+  "name": "aibdh5",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "npm run build:h5",
+    "build:h5": "vue-tsc -b && vite build --mode h5",
+    "build:xhs": "vue-tsc -b && vite build --mode xhs",
+    "validate:xhs": "node scripts/validate-xhs.mjs",
+    "package:xhs": "npm run build:xhs && npm run validate:xhs && bash scripts/package-xhs.sh",
+    "typecheck": "vue-tsc -b",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "qrcode": "^1.5.4",
+    "vue": "^3.5.40",
+    "vue-router": "^4.6.4"
+  },
+  "devDependencies": {
+    "@types/node": "^24.13.3",
+    "@types/qrcode": "^1.5.6",
+    "@vitejs/plugin-vue": "^6.0.8",
+    "@vue/tsconfig": "^0.9.1",
+    "typescript": "~6.0.2",
+    "vite": "^8.2.0",
+    "vitest": "^4.1.0",
+    "vue-tsc": "^3.3.8"
+  }
+}
