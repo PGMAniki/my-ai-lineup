@@ -52,6 +52,11 @@ export interface TitleCondition {
   maxTopGap?: number
   captainIsOnlyToolInCategory?: boolean
   captainSupportsPrimaryDimension?: boolean
+  dominantSpecialistCategory?: Exclude<ToolCategory, 'general'>
+  maxSpecialistTools?: number
+  maxSpecialistCategories?: number
+  minSpecialistCategories?: number
+  dominantSpecialistGroup?: Array<Exclude<ToolCategory, 'general'>>
 }
 
 export interface TitleRule {

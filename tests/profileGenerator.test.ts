@@ -14,9 +14,9 @@ const selection = (toolIds: string[], captainId: string): UserSelection => ({
 })
 
 describe('title rules', () => {
-  it('contains 30 reachable special titles with three verdict variants each', () => {
-    expect(TITLE_RULES).toHaveLength(30)
-    expect(new Set(TITLE_RULES.map((rule) => rule.id))).toHaveLength(30)
+  it('contains 31 reachable special titles with three verdict variants each', () => {
+    expect(TITLE_RULES).toHaveLength(31)
+    expect(new Set(TITLE_RULES.map((rule) => rule.id))).toHaveLength(31)
     expect(TITLE_RULES.every((rule) => rule.verdicts.length >= 3)).toBe(true)
   })
 
@@ -24,7 +24,7 @@ describe('title rules', () => {
     [selection(['codex', 'cursor', 'claude', 'n8n'], 'codex'), ['AI全栈包工头', '赛博工程总监', 'IDE常住人口']],
     [selection(['chatgpt', 'midjourney', 'seedance', 'runway', 'suno'], 'seedance'), ['一人内容制作公司', 'AI片场美术指导', 'AI片场导演']],
     [selection(['claude', 'perplexity', 'notebooklm', 'kimi'], 'notebooklm'), ['互联网资料考古学家', '文档堆里的侦探']],
-    [selection(['deepseek', 'cursor', 'codex'], 'cursor'), ['AI全栈包工头']],
+    [selection(['deepseek', 'cursor', 'codex'], 'cursor'), ['IDE常住人口']],
   ])('generates an expected title family for a fixed lineup', (input, expectedTitles) => {
     expect(expectedTitles).toContain(generateProfile(input).title)
   })
@@ -54,6 +54,31 @@ describe('title rules', () => {
   it('uses a single-dimension fallback when one capability clearly leads', () => {
     expect(generateProfile(selection(['metaso', 'perplexity', 'genspark', 'kimi', 'n8n'], 'metaso')).title)
       .toBe('研究驱动型AI玩家')
+  })
+
+  it.each([
+    [selection(['codex', 'claude-code', 'cursor', 'github-copilot', 'perplexity', 'notebooklm', 'genspark', 'metaso'], 'codex'), '技术研究型玩家'],
+    [selection(['codex', 'claude-code', 'cursor', 'github-copilot', 'midjourney', 'chatgpt-images', 'gemini-image', 'comfyui'], 'codex'), '创意开发型玩家'],
+    [selection(['suno', 'udio', 'elevenlabs'], 'suno'), '赛博卧室制作人'],
+  ])('preserves a professional or dual-professional identity', (input, expectedTitle) => {
+    expect(generateProfile(input).title).toBe(expectedTitle)
+  })
+
+  it.each([
+    [selection(['chatgpt', 'deepseek', 'doubao', 'codex', 'cursor', 'github-copilot'], 'cursor'), 'AI全栈包工头'],
+    [selection(['chatgpt', 'deepseek', 'doubao', 'midjourney', 'chatgpt-images', 'gemini-image'], 'midjourney'), '审美参数调教师'],
+    [selection(['chatgpt', 'deepseek', 'doubao', 'suno', 'udio'], 'suno'), '赛博卧室制作人'],
+  ])('lets professional tools define a lineup built on common assistants', (input, expectedTitle) => {
+    expect(generateProfile(input).title).toBe(expectedTitle)
+  })
+
+  it('does not call a general-plus-professional lineup a model panel', () => {
+    const profile = generateProfile(selection([
+      'chatgpt', 'claude', 'gemini', 'deepseek',
+      'codex', 'cursor', 'github-copilot', 'windsurf',
+    ], 'cursor'))
+    expect(profile.title).not.toBe('模型横评区常驻嘉宾')
+    expect(profile.title).toBe('AI全栈包工头')
   })
 })
 
