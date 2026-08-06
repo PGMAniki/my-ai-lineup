@@ -51,6 +51,7 @@ export interface TitleCondition {
   minTopGap?: number
   maxTopGap?: number
   captainIsOnlyToolInCategory?: boolean
+  captainSupportsPrimaryDimension?: boolean
 }
 
 export interface TitleRule {

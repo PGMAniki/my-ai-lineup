@@ -52,6 +52,11 @@ export const matchesTitleCondition = (
   if (condition.maxTopGap !== undefined && topGap > condition.maxTopGap) return false
 
   if (condition.captainIsOnlyToolInCategory && context.categoryCounts[context.captain.category] !== 1) return false
+  if (
+    condition.captainSupportsPrimaryDimension &&
+    context.captain.dimensions[context.primaryDimension] !==
+      Math.max(...Object.values(context.captain.dimensions))
+  ) return false
 
   return true
 }
@@ -68,10 +73,15 @@ export const findMatchingTitleRule = (
 export const createFallbackTitleRule = (context: ProfileContext): TitleRule => {
   const directKey = `${context.primaryDimension}:${context.secondaryDimension}`
   const reverseKey = `${context.secondaryDimension}:${context.primaryDimension}`
+  const topGap =
+    context.dimensionScores[context.primaryDimension] -
+    context.dimensionScores[context.secondaryDimension]
   const title =
-    DIMENSION_PAIR_TITLES[directKey] ??
-    DIMENSION_PAIR_TITLES[reverseKey] ??
-    SINGLE_DIMENSION_TITLES[context.primaryDimension]
+    topGap >= 15
+      ? SINGLE_DIMENSION_TITLES[context.primaryDimension]
+      : DIMENSION_PAIR_TITLES[directKey] ??
+        DIMENSION_PAIR_TITLES[reverseKey] ??
+        SINGLE_DIMENSION_TITLES[context.primaryDimension]
 
   return {
     id: `fallback-${directKey}`,

@@ -14,7 +14,7 @@ const selection = (toolIds: string[], captainId: string): UserSelection => ({
 })
 
 describe('title rules', () => {
-  it('contains 30 special titles with three verdict variants each', () => {
+  it('contains 30 reachable special titles with three verdict variants each', () => {
     expect(TITLE_RULES).toHaveLength(30)
     expect(new Set(TITLE_RULES.map((rule) => rule.id))).toHaveLength(30)
     expect(TITLE_RULES.every((rule) => rule.verdicts.length >= 3)).toBe(true)
@@ -27,6 +27,33 @@ describe('title rules', () => {
     [selection(['deepseek', 'cursor', 'codex'], 'cursor'), ['AI全栈包工头']],
   ])('generates an expected title family for a fixed lineup', (input, expectedTitles) => {
     expect(expectedTitles).toContain(generateProfile(input).title)
+  })
+
+  it.each([
+    [selection(['cursor', 'github-copilot', 'windsurf'], 'cursor'), 'IDE常住人口'],
+    [selection(['perplexity', 'notebooklm', 'kimi'], 'kimi'), '互联网资料考古学家'],
+    [selection(['seedance', 'sora', 'veo'], 'seedance'), 'AI片场导演'],
+    [selection(['midjourney', 'chatgpt-images', 'gemini-image'], 'midjourney'), '审美参数调教师'],
+    [selection(['chatgpt', 'claude', 'gemini', 'deepseek', 'doubao', 'kimi', 'qwen', 'grok'], 'chatgpt'), '单赛道重装玩家'],
+  ])('matches a representative user portrait to its precise title', (input, expectedTitle) => {
+    expect(generateProfile(input).title).toBe(expectedTitle)
+  })
+
+  it('does not describe terminal coding agents as IDE residents', () => {
+    expect(generateProfile(selection(['codex', 'claude-code', 'chatgpt'], 'claude-code')).title)
+      .not.toBe('IDE常住人口')
+  })
+
+  it('requires a real research tool for the cyber clerk portrait', () => {
+    const input = selection(['chatgpt', 'gemini', 'grok'], 'chatgpt')
+    const context = buildProfileContext(input, validateSelection(input, TOOL_BY_ID))
+    const cyberClerkRule = TITLE_RULES.find((rule) => rule.id === 'research-cyber-clerk')!
+    expect(matchesTitleCondition(cyberClerkRule.condition, context)).toBe(false)
+  })
+
+  it('uses a single-dimension fallback when one capability clearly leads', () => {
+    expect(generateProfile(selection(['metaso', 'perplexity', 'genspark', 'kimi', 'n8n'], 'metaso')).title)
+      .toBe('研究驱动型AI玩家')
   })
 })
 

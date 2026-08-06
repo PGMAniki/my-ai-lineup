@@ -16,8 +16,8 @@ const rule = (
 
 export const TITLE_RULES: readonly TitleRule[] = [
   rule('dev-ai-contractor', 'AI全栈包工头', 1000, { minimumMatches: [{ toolIds: ['codex', 'claude-code', 'cursor'], count: 2 }], minScores: { automation: 70 } }, '代码智能体协作'),
-  rule('dev-cyber-director', '赛博工程总监', 990, { minScores: { coding: 80, automation: 80 } }, '工程和自动化'),
-  rule('dev-ide-resident', 'IDE常住人口', 980, { captainIn: ['codex', 'claude-code', 'cursor', 'windsurf'] }, '编辑器里的长期生活'),
+  rule('dev-cyber-director', '赛博工程总监', 990, { minScores: { coding: 80, automation: 80 }, minCategoryCounts: { coding: 2 } }, '工程和自动化'),
+  rule('dev-ide-resident', 'IDE常住人口', 980, { captainIn: ['cursor', 'github-copilot', 'windsurf'] }, '编辑器里的长期生活'),
   rule('dev-workflow-wirer', '工作流接线员', 970, { minimumMatches: [{ toolIds: ['dify', 'coze', 'n8n'], count: 2 }] }, '工作流接线'),
   rule('dev-node-alchemist', '节点炼金术士', 960, { requiredTools: ['comfyui'], anyToolGroups: [['n8n', 'dify', 'coze']] }, '节点工作流'),
   rule('dev-startup-cto', '一句话创业公司CTO', 950, { requiredTools: ['replit-agent'], anyToolGroups: [['codex', 'claude-code']] }, '一句话开发'),
@@ -25,7 +25,7 @@ export const TITLE_RULES: readonly TitleRule[] = [
 
   rule('research-web-archaeologist', '互联网资料考古学家', 900, { requiredTools: ['perplexity', 'notebooklm'] }, '资料挖掘'),
   rule('research-universe-admin', '资料宇宙管理员', 910, { requiredTools: ['perplexity', 'notebooklm', 'genspark'] }, '资料宇宙管理'),
-  rule('research-cyber-clerk', '知识型赛博文官', 890, { minScores: { expression: 80, research: 80 } }, '知识整理与表达'),
+  rule('research-cyber-clerk', '知识型赛博文官', 890, { minScores: { expression: 80, research: 80 }, minCategoryCounts: { research: 1 } }, '知识整理与表达'),
   rule('research-model-panelist', '模型横评区常驻嘉宾', 880, { minCategoryCounts: { general: 4 } }, '多模型会诊'),
   rule('research-multi-model-doctor', '多模型会诊专家', 920, { requiredTools: ['chatgpt', 'claude', 'gemini', 'deepseek'] }, '多模型会诊'),
   rule('research-document-detective', '文档堆里的侦探', 870, { captainIn: ['notebooklm'] }, '长文档取证'),
@@ -41,13 +41,13 @@ export const TITLE_RULES: readonly TitleRule[] = [
   rule('creative-video-heavy-user', '生成式影像重度玩家', 780, { minCategoryCounts: { video: 4 } }, '生成式影像'),
 
   rule('structure-hex-solo', '六边形AI个体户', 750, { toolCount: { exact: 8 }, distinctCategories: { min: 6 } }, '六类工具协同'),
-  rule('structure-heavy-specialist', '单赛道重装玩家', 740, { toolCount: { exact: 8 }, distinctCategories: { max: 2 } }, '单赛道重装'),
+  rule('structure-heavy-specialist', '单赛道重装玩家', 925, { toolCount: { exact: 8 }, distinctCategories: { max: 2 } }, '单赛道重装'),
   rule('structure-minimalist', '极简AI实用派', 730, { toolCount: { exact: 3 }, minTopScore: 75 }, '少而精的工作流'),
   rule('structure-collector', 'AI工具收藏型人格', 720, { toolCount: { exact: 8 }, maxTopGap: 8 }, '工具收藏与均衡使用'),
   rule('structure-ai-everything', '什么都让AI做的人', 710, { allScoresAtLeast: 60 }, '全流程AI协作'),
   rule('structure-balanced-board', '工作流均衡发展委员会', 700, { maxScoreSpread: 15 }, '均衡工作流'),
   rule('structure-single-core', '单核驱动型玩家', 690, { minTopGap: 25 }, '单一强势能力'),
-  rule('structure-only-captain', '全队唯一指定核心', 680, { captainIsOnlyToolInCategory: true }, '唯一核心角色'),
+  rule('structure-only-captain', '全队唯一指定核心', 680, { captainIsOnlyToolInCategory: true, captainSupportsPrimaryDimension: true, minTopGap: 12 }, '唯一核心角色'),
 ] as const
 
 const pair = (primary: DimensionKey, secondary: DimensionKey): string => `${primary}:${secondary}`
