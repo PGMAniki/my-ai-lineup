@@ -5,6 +5,7 @@ const props = defineProps<{
   imageUrl: string
   canvas?: HTMLCanvasElement
   isWeChat: boolean
+  useLongPressSave: boolean
   shareText: string
 }>()
 

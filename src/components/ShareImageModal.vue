@@ -5,6 +5,7 @@ const props = defineProps<{
   imageUrl: string
   canvas?: HTMLCanvasElement
   isWeChat: boolean
+  useLongPressSave: boolean
   shareText: string
 }>()
 
@@ -46,8 +47,14 @@ onBeforeUnmount(() => {
         <button ref="closeButton" type="button" aria-label="关闭分享图" @click="$emit('close')">×</button>
       </header>
       <img :src="imageUrl" alt="我的AI阵容分享图预览" draggable="false" />
-      <p>{{ isWeChat ? '请长按上方图片，选择“保存到手机”或发送给朋友。' : '点击下方按钮保存图片。' }}</p>
-      <a v-if="!isWeChat" :href="imageUrl" download="我的AI阵容.png">保存图片</a>
+      <p>
+        {{
+          useLongPressSave
+            ? '请长按上方图片，选择“存储到照片”或“保存图片”。'
+            : '点击下方按钮下载图片。'
+        }}
+      </p>
+      <a v-if="!useLongPressSave" :href="imageUrl" download="我的AI阵容.png">下载图片</a>
       <section class="share-modal__copy" aria-labelledby="share-copy-title">
         <strong id="share-copy-title">推荐分享文案</strong>
         <p>{{ shareText }}</p>

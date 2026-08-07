@@ -1,5 +1,6 @@
 import { onBeforeUnmount, ref } from 'vue'
 import { IS_XIAOHONGSHU } from '../config/platform'
+import { prefersLongPressImageSave } from '../core/browserCapabilities'
 import type { GeneratedProfile } from '../types'
 import { renderShareCanvas, renderShareImage } from './shareCanvas'
 
@@ -20,6 +21,10 @@ export const useShareImage = () => {
   const previewUrl = ref('')
   const previewCanvas = ref<HTMLCanvasElement>()
   const isWeChat = /MicroMessenger/i.test(navigator.userAgent)
+  const useLongPressSave = prefersLongPressImageSave(
+    navigator.userAgent,
+    navigator.maxTouchPoints,
+  )
 
   const closePreview = (): void => {
     if (previewUrl.value.startsWith('blob:')) URL.revokeObjectURL(previewUrl.value)
@@ -61,5 +66,14 @@ export const useShareImage = () => {
 
   onBeforeUnmount(closePreview)
 
-  return { isGenerating, error, previewUrl, previewCanvas, isWeChat, generate, closePreview }
+  return {
+    isGenerating,
+    error,
+    previewUrl,
+    previewCanvas,
+    isWeChat,
+    useLongPressSave,
+    generate,
+    closePreview,
+  }
 }

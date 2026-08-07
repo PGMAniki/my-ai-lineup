@@ -21,6 +21,7 @@ const {
   previewUrl,
   previewCanvas,
   isWeChat,
+  useLongPressSave,
   generate,
   closePreview,
 } = useShareImage()
@@ -163,6 +164,7 @@ const restart = async (): Promise<void> => {
         :image-url="previewUrl"
         :canvas="previewCanvas"
         :is-we-chat="isWeChat"
+        :use-long-press-save="useLongPressSave"
         :share-text="recommendedShareText"
         @close="closePreview"
       />
