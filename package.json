@@ -7,6 +7,7 @@
     "dev": "vite",
     "build": "npm run build:h5",
     "build:h5": "vue-tsc -b && vite build --mode h5",
+    "build:github-pages": "vue-tsc -b && vite build --mode github-pages",
     "build:xhs": "vue-tsc -b && vite build --mode xhs",
     "validate:xhs": "node scripts/validate-xhs.mjs",
     "package:xhs": "npm run build:xhs && npm run validate:xhs && bash scripts/package-xhs.sh",

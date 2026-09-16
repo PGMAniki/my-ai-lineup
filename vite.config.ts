@@ -5,9 +5,10 @@ import { fileURLToPath, URL } from 'node:url'
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {
   const isXiaohongshu = mode === 'xhs'
+  const isGitHubPages = mode === 'github-pages'
 
   return {
-    base: isXiaohongshu ? './' : '/',
+    base: isXiaohongshu ? './' : isGitHubPages ? '/my-ai-lineup/' : '/',
     plugins: [vue()],
     define: {
       __APP_TARGET__: JSON.stringify(isXiaohongshu ? 'xiaohongshu' : 'h5'),
@@ -41,7 +42,7 @@ export default defineConfig(({ mode }) => {
       },
     },
     build: {
-      outDir: isXiaohongshu ? 'dist/xhs' : 'dist/h5',
+      outDir: isXiaohongshu ? 'dist/xhs' : isGitHubPages ? 'dist/github-pages' : 'dist/h5',
       emptyOutDir: true,
       modulePreload: { polyfill: !isXiaohongshu },
     },
